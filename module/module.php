@@ -1,35 +1,27 @@
 <?php
-	class module{
-		public $module;
-		public function __construct($modulTidakDiperlukan = array()){
-			//Load Semua module, biar kodingnya bisa terpisah
-			$modul = scandir(__DIR__); 
-			/* 
-				Menghilangkan .,.., dan module.php, karena error dan module.php tidak boleh memanggil dirinya sendiri 
-				http://php.net/manual/en/function.array-diff.php
-				http://stackoverflow.com/a/369608
-			*/
-			$modul = array_diff($modul,['.','..','module.php']);
-			if(count($modulTidakDiperlukan) > 0) {
-				$modul = array_diff($modul,$modulTidakDiperlukan);
-			}
-			$this->module = $modul;
-		}
-		
-		public function load(){
-			foreach($this->modul as $key => $value){
-				include_once("$value"); // Di Include 1-1, semua module yang ada dipakai
-			}
+	session_start(); // Start Session Selalu, cari aman
+
+	$module = scandir(__DIR__); 
+	/* 
+		Menghilangkan .,.., dan module.php, karena error dan module.php tidak boleh memanggil dirinya sendiri 
+		http://php.net/manual/en/function.array-diff.php
+		http://stackoverflow.com/a/369608
+	*/
+	$module = array_diff($module,['.','..','module.php']);
+	if(isset($modulTidakDiperlukan)){
+		if(count($modulTidakDiperlukan) > 0) {
+			$module = array_diff($module,$modulTidakDiperlukan);
 		}
 	}
 	
+	foreach($module as $value){
+		require($value); // Di Include 1-1, semua module yang ada dipakai
+	}
+
 	/* 
 		cara pakai kaya dibawah, kalau ada modul yang tidak dipakai tinggal dihapus aja pakai lempar array
-		$module = new module();
-		
-		cara hapus modul
-		$modul = new module(array("db.php"));
-		
-		var_dump($module->module); 
+		$modulTidakDiperlukan = ['isLoggedIn.php']; => array, nama file yang ga dipakai
+		contoh diatas aku pakai karena kalau di login.php dibiarin load, ntar redirect terus, karena user belum login, hehehe...
+		include_once("module/module.php");
 	*/
 ?>

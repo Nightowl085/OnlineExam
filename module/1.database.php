@@ -1,6 +1,6 @@
 <?php
-	
-	class db {
+	// Pakai aturan OOP, D besar karena takut tabrakan sama class bawaan php yang kecil kecil classnya, entahlah, tabrakan sama PEAR, nanti muncul error 1024 PHP Pear
+	class Database {
 		private $server,$user,$pass,$db;
 		
 		/* 
@@ -36,8 +36,7 @@
 		public function executeGetArray($query){ 
 			$sql = $this->connection(); // Inisasi Koneksi
 			if($sql->connect_errno == 0){
-				$safeQuery = $sql->escape_string($query); // Always do this so there would be no problem anyway.
-				$result = $sql->query($safeQuery); // Hasil Query
+				$result = $sql->query($query); // Hasil Query
 				if(count($sql->error_list) > 0) {
 					echo "<pre>"; echo var_dump($sql->error_list); echo "</pre>"; //not print_r because we need the datatype, always var_dump! no print_r! http://stackoverflow.com/questions/3406171/php-var-dump-vs-print-r
 				}
@@ -51,7 +50,7 @@
 				}
 			}
 			else{
-				echo "Ada Masalah dengan Koneksi ke DB, silahkan cek kembali server anda atau hubungi developer: $sql->connect_errno $sql->connect_error";
+				echo "Ada Masalah dengan Koneksi ke DB, silahkan cek kembali server anda atau hubungi developer: {$sql->connect_errno} - {$sql->connect_error}";
 			}
 			$sql->close(); $sql = NULL; // Close and Dispose to free ram, faster than unset, see http://stackoverflow.com/a/13558543 and http://stackoverflow.com/a/20294378
 		}
@@ -67,10 +66,9 @@
 		public function executeNonQuery($query){
 			$sql = $this->connection();
 			if($sql->connect_errno == 0){
-				$safeQuery = $sql->escape_string($query); // Always do this so there would be no problem anyway.
-				$result = $sql->query($safeQuery); // Hasil Query
+				$result = $sql->query($query); // Hasil Query
 				if(count($sql->error_list) > 0) {
-					return "<pre>"; echo var_dump($sql->error_list); echo "</pre>"; //not print_r because we need the datatype, always var_dump! no print_r! http://stackoverflow.com/questions/3406171/php-var-dump-vs-print-r
+					echo "<pre>"; echo var_dump($sql->error_list); echo "</pre>"; //not print_r because we need the datatype, always var_dump! no print_r! http://stackoverflow.com/questions/3406171/php-var-dump-vs-print-r
 				}
 				else{
 					return false;
@@ -81,6 +79,7 @@
 			}
 			$sql->close(); $sql = NULL; // Close and Dispose to free ram, faster than unset, see http://stackoverflow.com/a/13558543 and http://stackoverflow.com/a/20294378
 		}
+		
 		/**
 		 *  @brief Untuk Execute Scalar, kaya count, atau sejenis
 		 *  
@@ -92,9 +91,22 @@
 		public function executeGetScalar($query){
 			return $this->executeGetArray($query)[0][0];
 		}
+		
+		/**
+		 *  @brief Ini untuk Escape string secara cepat pakai $db->escape, sebenarnya bisa aja langsung kaya dibawah, cuman males ae panjang, lapo
+		 *  
+		 *  @param [in] $var Variable yang mau di 
+		 *  @return variable yang sudah ke escape, lebih aman dari injection
+		 *  
+		 *  @details Guna escaping string adalah untuk menghindari injection DB, kalau sampai ke inject berbahaya, kalau sudah online terutama...
+		 *  http://stackoverflow.com/questions/10646142/what-does-it-mean-to-escape-a-string
+		 *  Cara pakai :
+		 *   $var = $db->escape($_POST['foo']); ==> ini rawan sering kali inputan user bisa sembarangan, jadi bikin ini aja... 
+		 */
+		public function escape($var){
+			return $this->connection()->escape_string($var);
+		}
 	}
 	
-	$db = new db("localhost","root","","onlineexam");
-	
-	echo $db->executeGetScalar("select count(*) from detail_ujian");
+	$db = new Database("localhost","root","","onlineexam");
 ?>
