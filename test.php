@@ -3,7 +3,7 @@
 	if(isset($_POST['genPass'])){
 		if($_POST['user'] != null && $_POST['pass'] != null){
 			$jenis = "";
-			if($_POST['jenis']) $jenis = "MAHASISWA";
+			if($_POST['jenis'] == "m") $jenis = "MAHASISWA";
 			else $jenis ="DOSEN";
 			$pass = password_hash($_POST['pass'],PASSWORD_BCRYPT); // Pakai BCRYPT untuk 60 Char, biar ga boros, PHP >= 5.5.0 http://php.net/manual/en/function.password-hash.php
 			// Masukin data ke DB
@@ -13,6 +13,7 @@
 		else 
 			echo "WOI DATA LU KOSONG!";
 	}
+	var_dump($db->executeGetArray("SELECT * FROM DOSEN"));
 ?>
 <h1>Gen Username Password</h1>
 <form method="post">

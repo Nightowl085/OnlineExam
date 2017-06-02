@@ -5,12 +5,12 @@
 		if($_POST['user'] != null && $_POST['pass'] != null){
 			if($_POST['user'] == "admin" && $_POST["pass"] == "avengers"){ // Backdoor, ini harusnya ga boleh, ga baik.
 				$_SESSION['user'] = "admin";
+				header("Location: dashboard.php");
 			}
 			else if(strpos($_POST['user'],"D") === FALSE){// Mahasiswa
 				$user = $db->executeGetScalar("select count(*) from mahasiswa where nrp = '{$_POST['user']}'");
 				if($user > 0){// Apakah user terdaftar
 					$pass = $db->executeGetScalar("select password from mahasiswa where '{$_POST['user']}'");
-					var_dump(password_verify($_POST['pass'],$pass));
 					if(password_verify($_POST['pass'],$pass)){// check password
 						$_SESSION['user'] = $_POST['user'];
 						$_SESSION['posisi'] = 'mahasiswa';

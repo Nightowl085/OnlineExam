@@ -12,6 +12,6 @@
      */
     function logout(){
         echo"<form method='post'>
-            <button name='logoutRequest' value='1'>LogOut</button>
+            <button name='logoutRequest' value='1' class='btn btn-default btn-flat'>LogOut</button>
         </form>";
     }

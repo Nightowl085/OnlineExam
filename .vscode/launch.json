@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "Listen for XDebug",
             "type": "php",
@@ -14,6 +15,20 @@
             "program": "${file}",
             "cwd": "${fileDirname}",
             "port": 9000
+        },
+        {
+            "name": "Launch localhost",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost/oe/${relativeFile}",
+            "webRoot": "${workspaceRoot}"
+        },
+        {
+            "name": "Launch index.html (disable sourcemaps)",
+            "type": "chrome",
+            "request": "launch",
+            "sourceMaps": false,
+            "file": "${workspaceRoot}/index.html"
         }
     ]
 }
