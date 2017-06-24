@@ -1,6 +1,6 @@
 <?php
 	session_start(); // Start Session Selalu, cari aman
-
+	define("GLOBALDIR",realpath(__DIR__."/.."));
 	$module = scandir(__DIR__); 
 	/* 
 		Menghilangkan .,.., dan module.php, karena error dan module.php tidak boleh memanggil dirinya sendiri 
@@ -15,7 +15,9 @@
 	}
 	
 	foreach($module as $value){
-		require($value); // Di Include 1-1, semua module yang ada dipakai
+		if(strpos($value,".php") !== false){
+			require_once($value); // Di Include 1-1, semua module yang ada dipakai
+		}
 	}
 
 	/* 

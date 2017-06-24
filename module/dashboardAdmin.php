@@ -2,13 +2,52 @@
     function menuAdmin($active){
         ?> 
         <?php 
-            $menu[0] = array("Awal","dahsboard.php");
-            $menu[1] = array("Master Dosen","masterDosen.php");
+            $menu[0] = array("Awal","dashboard.php");
+            $menu[1] = array( -1 => "Master Dosen",
+                                0 => array(
+                                    array("Lihat","lihathapusupdatedosen.php"),
+                                    array("Tambah","masterDosen.php"))
+                                );
             $menu[2] = array("Master Mata Kuliah","masterMatakuliah.php");
+            $menu[3] = array( -1 => "Master Mahasiswa",
+                                0 => array(
+                                    array("Lihat Mahasiswa","adminviewmhs.php"),
+                                    array("Tambah/Update Mahasiswa","admininsertmhs.php")
+                                ));
             foreach($menu as $data){
+                if(!isset($data[-1])){
         ?>
-                <li <?php if($active == $data[0]) echo "class='active'";?> ><a href="<?php echo $data[1];?>"><i class="fa fa-circle-o"></i><span><?php echo $data[0];?></a></span></li>
+                <li <?php 
+                    if(!is_array($active)){
+                        if($active == $data[0]) echo "class='active'";
+                    }
+                ?> ><a href="<?php echo $data[1];?>"><i class="fa fa-circle-o"></i><span><?php echo $data[0];?></a></span></li>
         <?php
+                }
+                else{
+        ?>
+            <li class="treeview <?php if(is_array($active)){
+                        if($active[0] == $data[-1]) echo "active";
+                    }?>">
+            <a href="#">
+                <i class="fa fa-circle-o"></i>
+                <span><?php echo $data[-1]; ?></span>
+                <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu <?php if(is_array($active)){
+                        if($active[0] == $data[-1]) echo "menu-open";
+                    }?>">
+                <?php foreach($data[0] as $child) {?>
+                <li <?php if(is_array($active)){
+                        if($active[1] == $child[0]) echo "class='active'";
+                    } ?>><a href="<?php echo $child[1]; ?>"><i class="fa fa-circle-o"></i> <?php echo $child[0]; ?></a></li>
+                <?php } ?>
+            </ul>
+            </li>
+        <?php
+                }
             }
     }
 
@@ -20,6 +59,16 @@
     function jumlahMahasiswa(){
         global $db;
         echo $db->executeGetScalar("SELECT COUNT(*) FROM MAHASISWA");
+    }
+
+    function nilaiRataRata(){
+        global $db;
+        echo  $db->executeGetScalar("SELECT AVG(`Nilai`) FROM NILAI");
+    }
+
+    function jumlahSoal(){
+        global $db;
+        echo  $db->executeGetScalar("SELECT Count(*) as AAA FROM header_ujian");
     }
 
     function dashboardAdmin(){
@@ -65,7 +114,7 @@
         <!-- Main Header -->
         <header class="main-header">
             <!-- Logo -->
-            <a href="index2.html" class="logo">
+            <a href="index.php" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><b>i</b>OE</span>
                 <!-- logo for regular state and mobile devices -->
@@ -170,6 +219,28 @@
                     </div><!--/info-box-->
                 </div><!--/bs3-col-md-6-->
             </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Jumlah Soal yang sudah dibuat</span>
+                            <span class="info-box-number"><?php jumlahSoal(); ?></span>
+                        </div><!--/info-box-content-->
+                    </div><!--/info-box-->
+                </div><!--/bs3-col-md-6-->
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Nilai Rata-rata semua ujian</span>
+                            <span class="info-box-number"><?php nilaiRataRata(); ?></span>
+                        </div><!--/info-box-content-->
+                    </div><!--/info-box-->
+                </div><!--/bs3-col-md-6-->
+            </div>
         </section>
         <!-- /.content -->
         </div>
@@ -187,17 +258,6 @@
         </div>
         <!-- ./wrapper -->
 
-        <!-- REQUIRED JS SCRIPTS -->
-        <!-- jQuery 2.2.3 -->
-        <!-- Bootstrap 3.3.6 -->
-        <script src="asset/js/bootstrap.min.js"></script>
-        <!-- AdminLTE App -->
-        <script src="asset/dist/js/app.min.js"></script>
-
-        <!-- Optionally, you can add Slimscroll and FastClick plugins.
-        Both of these plugins are recommended to enhance the
-        user experience. Slimscroll is required when using the
-        fixed layout. -->
     </body>
 </html>
         <?php

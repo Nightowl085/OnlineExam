@@ -3,17 +3,17 @@
     include_once("module/module.php");
     if($_SESSION['user'] != "admin") header("Location: 404");
 
-    $pesan = "";
+    $pesan = ""; $pesanError = "";
 
     if(isset($_POST["btnTambahMatkul"])){
-        $query = "INSERT INTO `mata kuliah` VALUES(NULL,'{$_POST['txtNamaMatkul']}')";
+        $query = "INSERT INTO `mata kuliah` VALUES(NULL,'{$_POST['txtNamaMatkul']}',TRUE)";
         $db->executeNonQuery($query);
         $pesan = "Mata kuliah {$_POST['txtNamaMatkul']} berhasil ditambahkan";
     }
 
     function tableMataKuliah(){
         global $db;
-        $data = $db->executeGetArray("SELECT * FROM `mata kuliah`");
+        $data = $db->executeGetArray("SELECT * FROM `mata kuliah` WHERE STATUS = TRUE");
         ?>
         <div class="col-xs-12">
           <div class="box box-primary">
@@ -44,7 +44,12 @@
                         <tr>
                         <td>{$value[0]}</td>
                         <td>{$value[1]}</td>
-                        <td>{$db->executeGetScalar("SELECT COUNT(*) FROM MENGAJAR WHERE `Kode Matkul` = '{$value[0]}'")} <form method='get' action='#formLihatPengajar' style='display:inline-block;margin-left:10px;'><button class='btn btn-default' value='{$value[0]}' name='btnLihatPengajar'>Lihat Pengajar</button></form></td>
+                        <td>{$db->executeGetScalar("SELECT COUNT(*) FROM MENGAJAR WHERE `Kode Matkul` = '{$value[0]}'")} <form method='get' action='#formLihatPengajar' style='display:inline-block;margin-left:10px;'><button class='btn btn-default' value='{$value[0]}' name='btnLihatPengajar'>Lihat Pengajar</button></form>
+                        <form method='get' action='#dialogUpdate' method='get' action='#dialogUpdateMatkul' style='display:inline-block;margin-left:10px;'>
+                            <button class='btn btn-info' value='{$value[0]}' name='btnUpdateMatkul'>Update</button>
+                        </form>
+                        <button type='button' class='btn btn-danger' data-toggle='modal' data-target='#dialogDeleteMatkul' value='{$value[0]}' name='btnHapusMatkul'>Hapus</button>
+                        </td>
                         </tr>";
                     }
                 }
@@ -63,6 +68,87 @@
           </div>
           <!-- /.box -->
         </div>
+        <?php
+        deleteMataKuliah();
+    }
+
+    // Trigger untuk update nama mata kuliah
+    if(isset($_POST['btnUpdateMatkul'])){
+        $namaLama = $db->executeGetScalar("SELECT `nama matkul` from `Mata Kuliah` WHERE `kode matkul` = '{$_POST['txtIdUpdateMatkul']}'");
+        $pesan = "Berhasil melakukan update mata kuliah dari $namaLama menjadi '{$_POST['txtNamaUpdateMatkul']}'";
+        $Query = "UPDATE `Mata Kuliah` SET `Nama Matkul` = '{$_POST['txtNamaUpdateMatkul']}' WHERE `Kode Matkul` = '{$_POST['txtIdUpdateMatkul']}'";
+        $db->executeNonQuery($Query);
+    }
+
+    function updateMataKuliah(){
+        global $db;
+        if(isset($_GET['btnUpdateMatkul'])){
+        ?>
+        <div class="row" id="dialogUpdateMatkul">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="box-header">
+                    <h3 class="box-title">Update Mata Kuliah <?php echo $db->executeGetScalar("SELECT `NAMA matkul` FROM `mata kuliah` WHERE `kode matkul` = {$_GET['btnUpdateMatkul']}"); ?></h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <form id="formUpdateMatKul" class="form-horizontal" role="form" data-toggle="validator" method="post">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="txtNamaUpdateMatkul" class="col-sm-2 control-label">Nama Mata Kuliah</label>
+
+                                <div class="col-sm-10">
+                                    <input type="hidden" name="txtIdUpdateMatkul" value="<?php echo $_GET['btnUpdateMatkul']; ?>" >
+                                    <input type="text" class="form-control" id="txtNamaUpdateMatkul" name="txtNamaUpdateMatkul" placeholder="Nama Mata Kuliah baru untuk '<?php echo 
+                                    $db->executeGetScalar("SELECT `NAMA matkul` FROM `mata kuliah` WHERE `kode matkul` = {$_GET['btnUpdateMatkul']}"); ?>'" data-error="Data harus diisi!" required>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                        </div><!-- /.box-body -->
+                        <div class="box-footer">
+                            <button type="submit" name="btnUpdateMatkul" value="1" class="btn btn-success pull-right">Ubah</button>
+                            <button type="button" class="btn btn-default" id="btnCancelUpdateMatkul">Cancel</button>
+                        </div><!-- /.box-footer -->
+                    </form>
+                </div>
+                <!-- /.box -->
+            </div>
+        </div>
+        <?php
+        }
+    }
+
+    //Trigger Delete Mata Kuliah = Hide
+    if(isset($_POST['txtIdDeleteMatkul'])){
+        $Query = "UPDATE `Mata Kuliah` SET status = false WHERE `Kode Matkul` = '{$_POST['txtIdDeleteMatkul']}'";
+        $db->executeNonQuery($Query);
+        $pesan = "Berhasil Menghapus mata kuliah ". $db->executeGetScalar("SELECT `Nama Matkul` FROM `Mata Kuliah` WHERE `Kode Matkul` = '{$_POST['txtIdDeleteMatkul']}'");
+    }
+
+    function deleteMataKuliah(){
+        ?>
+            <form method="post">
+            <div class="modal modal-danger fade" id="dialogDeleteMatkul" role="dialog" aria-labelledby="modalDeleteMatkul">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="modalDeleteMatkul">Hapus mata kuliah?</h4>
+                    </div>
+                    <div class="modal-body">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button class="btn btn-primary">Hapus</button>
+                    </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+            </form>
         <?php
     }
 
@@ -93,6 +179,33 @@
         }
     }
 
+    function pesanError(){
+        global $pesanError;
+        if($pesanError != ""){
+        ?>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box box-danger box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Gagal</h3>
+
+                            <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                            </div>
+                            <!-- /.box-tools -->
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <?php echo $pesanError; ?>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+        <?php
+        }
+    }
+
     function lihatPengajar(){
         global $db;
         if(isset($_GET['btnLihatPengajar'])){
@@ -114,7 +227,7 @@
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body">
-                            <table class="table table-bordered table-striped datatable">
+                            <table class="table table-bordered table-striped datatable" id="mengajar">
                             <thead>
                                 <tr>
                                 <th>Kode Dosen</th>
@@ -129,7 +242,7 @@
                                     (SELECT `Kode Matkul`,NID,COUNT(*) as jumlah FROM  onlineexam.mengambil GROUP BY `Kode Matkul`, NID) am,
                                     onlineexam.dosen d
                                     where d.NID = am.NID AND `kode matkul` = '{$_GET['btnLihatPengajar']}'
-                                    UNION DISTINCT
+                                    UNION
                                     SELECT d.NID, d.Nama, 0 from onlineexam.mengajar me, onlineexam.dosen d WHERE `Kode Matkul`='{$_GET['btnLihatPengajar']}' AND D.NID = me.NID
                                     AND d.nid not in (select NID FROM onlineexam.mengambil am where am.`Kode Matkul` = '{$_GET['btnLihatPengajar']}')");
                                 if($data != null){
@@ -138,7 +251,14 @@
                                         <tr>
                                         <td>{$value[0]}</td>
                                         <td>{$value[1]}</td>
-                                        <td>{$db->executeGetScalar("SELECT COUNT(*) FROM MENGAJAR WHERE `Kode Matkul` = '{$value[0]}'")} <button class='btn btn-danger' style='height:30px;padding: 5px; 10px;' value='{$value[0]},{$_GET['btnLihatPengajar']}' name='btnLihatPengajar'>Hapus</button></td>
+                                        <td>{$value[2]} 
+                                        <form class='formLihatMahasiswa' method='get' action='#dataMahasiswaMengambil' style='display:inline-block'>
+                                        <input type='hidden' name='btnLihatPengajar' value='{$_GET['btnLihatPengajar']}'>
+                                        <button style='height:30px;padding: 5px; 10px;' value='{$value[0]}' name='btnLihatMahasiswa' class='btn btn-default'>Lihat Mahasiswa</button></form>
+										<form method='post'>
+                                        <button class='btn btn-danger' style='height:30px;padding: 5px; 10px;' value='{$value[0]},{$_GET['btnLihatPengajar']}' name='btnHapusPengajar'>Hapus</button>
+                                        </form>
+                                        </td>
                                         </tr>";
                                     }
                                 }
@@ -164,58 +284,215 @@
                 </div>
             </div>
         <?php
-            formTambahPengajar();
+            formTambahPengajar(); lihatMahasiswa();
         }
     }
-
+	
     //Trigger Tambah Pengajar
     if(isset($_POST["btnTambahPengajar"])){
         $db->executeNonQuery("INSERT INTO `Mengajar` VALUES('{$_POST['kodeMatKul']}','{$_POST['txtIdDosen']}')");
         $pesan = "Berhasil menambah '{$db->executeGetScalar("SELECT `Nama` FROM DOSEN WHERE NID='{$_POST['txtIdDosen']}'")}' sebagai pengajar {$db->executeGetScalar("SELECT `Nama Matkul` FROM `mata kuliah` WHERE `Kode Matkul` = '{$_POST['kodeMatKul']}'")}";
     }
-
+	// Trigger Hapus Pengajar mata Kuliah
+	if(isset($_POST['btnHapusPengajar'])){
+		$data = explode(",",$_POST['btnHapusPengajar']);
+		$query = "DELETE FROM `mengajar` WHERE ";
+		$db->executeNonQuery("INSERT INTO `Mengajar` VALUES('{$_POST['kodeMatKul']}','{$_POST['txtIdDosen']}')");
+        $pesan = "Berhasil menambah '{$db->executeGetScalar("SELECT `Nama` FROM DOSEN WHERE NID='{$_POST['txtIdDosen']}'")}' sebagai pengajar {$db->executeGetScalar("SELECT `Nama Matkul` FROM `mata kuliah` WHERE `Kode Matkul` = '{$_POST['kodeMatKul']}'")}";
+	}
+	
     function formTambahPengajar(){
         global $db;
         $data = $db->executeGetArray("SELECT * FROM DOSEN");
         ?>
         <div class="row" id="dialogTambahPengajar">
             <div class="col-xs-12">
-            <div class="box box-success">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Tambah Pengajar</h3>
-                    <!-- /.box-tools -->
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Tambah Pengajar</h3>
+                        <!-- /.box-tools -->
+                    </div>
+                    <!-- /.box-header -->
+                    <form id="formTambahMatKul" class="form-horizontal" role="form" data-toggle="validator" method="post">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="txtNamaMatkul" class="col-sm-2 control-label">Mata Kuliah</label>
+
+                                <div class="col-sm-10" style="display: table;    vertical-align: middle;height: 30px;">
+                                    <span style="display: table-cell;vertical-align: middle;" ><?php echo $db->executeGetScalar("SELECT `Nama Matkul` FROM `mata kuliah` WHERE `Kode Matkul` = '{$_GET['btnLihatPengajar']}'"); ?></span>
+                                    <input type="hidden" name="kodeMatKul" value="<?php echo $_GET['btnLihatPengajar']; ?>">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="txtIdDosen" class="col-sm-2 control-label">Dosen</label>
+
+                                <div class="col-sm-10">
+                                    <select name="txtIdDosen" id="txtIdDosen" class="form-control" required data-error="Dosen yang mengajar harus dipilih!">
+                                    <?php
+                                        foreach($data as $dosen){
+                                            echo "<option value='{$dosen['NID']}'>{$dosen['Nama']}</option>";
+                                        }
+                                    ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div><!-- /.box-body -->
+                        <div class="box-footer">
+                            <button type="submit" name="btnTambahPengajar" value="1" class="btn btn-success pull-right">Tambahkan</button>
+                            <button type="button" class="btn btn-default" id="btnCancelTambahPengajar">Cancel</button>
+                        </div><!-- /.box-footer -->
+                    </form>
                 </div>
-                <!-- /.box-header -->
-                <form id="formTambahMatKul" class="form-horizontal" role="form" data-toggle="validator" method="post">
+            </div> 
+        </div>
+        <?php
+    }
+
+    function lihatMahasiswa(){
+        global $db;
+        if(isset($_GET['btnLihatMahasiswa'])){
+        ?> 
+        <div class="row" id="dataMahasiswaMengambil">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Daftar Mahasiswa yang mengambil Mata Kuliah <?php
+                            echo $db->executeGetScalar("SELECT `Nama Matkul` FROM `mata kuliah` where `Kode Matkul` = '{$_GET['btnLihatPengajar']}'");
+                        ?></h3>
+                        <div class="box-tools">
+                            <div class="input-group input-group-sm" style="width: 200px;">
+                                <button id="btnTambahMengambil" class="btn btn-success" style="display:inline-block;height: 30px;padding: 5px 10px; margin-right:10px;"><span class="glyphicon glyphicon-plus"></span> Tambah</button>
+                                <form method="get" style="display:inline-block;" action="#formLihatPengajar">
+                                    <input type="hidden" name="btnLihatPengajar" value="<?php echo $_GET['btnLihatPengajar']; ?>">
+                                    <button id="btnTutupMengambil" class="btn btn-danger" style="display:inline-block;height: 30px;padding: 5px 10px;"><span class="glyphicon glyphicon-remove"></span> Tutup</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- /.box-tools -->
+                    </div>
+                    <!-- /.box-header -->
                     <div class="box-body">
-                        <div class="form-group">
-                            <label for="txtNamaMatkul" class="col-sm-2 control-label">Mata Kuliah</label>
-
-                            <div class="col-sm-10" style="display: table;    vertical-align: middle;height: 30px;">
-                                <span style="display: table-cell;vertical-align: middle;" ><?php echo $db->executeGetScalar("SELECT `Nama Matkul` FROM `mata kuliah` WHERE `Kode Matkul` = '{$_GET['btnLihatPengajar']}'"); ?></span>
-                                <input type="hidden" name="kodeMatKul" value="<?php echo $_GET['btnLihatPengajar']; ?>">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="txtIdDosen" class="col-sm-2 control-label">Dosen</label>
-
-                            <div class="col-sm-10">
-                                <select name="txtIdDosen" id="txtIdDosen" class="form-control" required data-error="Dosen yang mengajar harus dipilih!">
+                        <table class="table table-bordered table-striped datatable" id="mengambil">
+                        <thead>
+                            <tr>
+                            <th>NRP</th>
+                            <th>Nama Mahasiswa</th>
+                            <th>Nilai</th>
+                            <th>Aksi</th>
+                            </tr>
+                        </thead>
+                            <tbody>
+                        <?php 
+                            $data = $db->executeGetArray("SELECT m.NRP, m.Nama, n.Nilai, am.`kode matkul`, am.NID
+                            from onlineexam.mahasiswa m, onlineexam.mengambil am,(SELECT nrp,nilai
+                            FROM onlineexam.nilai
+                            where nid = '{$_GET['btnLihatMahasiswa']}' and `kode matkul` = '{$_GET['btnLihatPengajar']}'
+                            union
+                            select nrp, 0
+                            from onlineexam.mengambil
+                            where nid = '{$_GET['btnLihatMahasiswa']}' and `kode matkul` = '{$_GET['btnLihatPengajar']}' and nrp not in (SELECT nrp
+                            FROM onlineexam.nilai
+                            where nid = '{$_GET['btnLihatMahasiswa']}' and `kode matkul` = '{$_GET['btnLihatPengajar']}')) n
+                            where am.NRP = m.NRP and am.`Kode Matkul`= '{$_GET['btnLihatPengajar']}' and am.NID = '{$_GET['btnLihatMahasiswa']}' and n.NRP = m.NRP;");
+                            if($data != null){
+                                foreach($data as $value){
+                                    echo "
+                                    <tr>
+                                    <td>{$value[0]}</td>
+                                    <td>{$value[1]}</td>
+                                    <td>{$value[2]}</td>
+                                    <td><form method='post'><button class='btn btn-danger' style='height:30px;padding: 5px; 10px;' value='{$value[0]},{$value[3]},{$value[4]}' name='btnHapusMhsAmbil'>Hapus</button></form></td>
+                                    </tr>";
+                                }
+                            }
+                            else{
+                                ?>
+                                    <tr><td colspan="4" style="text-align:center">Tidak ada mahasiswa mengambil mata kuliah</td><td style="display:none"> </td><td style="display:none"> </td><td style="display:none"> </td></tr>
                                 <?php
-                                    foreach($data as $dosen){
-                                        echo "<option value='{$dosen['NID']}'>{$dosen['Nama']}</option>";
-                                    }
-                                 ?>
-                                </select>
-                            </div>
-                        </div>
-                    </div><!-- /.box-body -->
-                    <div class="box-footer">
-                        <button type="submit" name="btnTambahPengajar" value="1" class="btn btn-success pull-right">Tambahkan</button>
-                        <button type="button" class="btn btn-default" id="btnCancelTambahPengajar">Cancel</button>
-                    </div><!-- /.box-footer -->
-                </form>
+                                //https://stackoverflow.com/a/34012324 -> Ngakali
+                            }
+                        ?>
+                        </tbody>
+                        <tfooter>
+                            <tr>
+                            <th>NRP</th>
+                            <th>Nama Mahasiswa</th>
+                            <th>Nilai</th>
+                            <th>Aksi</th>
+                            </tr>
+                        </tfooter>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
             </div>
+        </div>
+        <?php formMahasiswaMengambil();
+        }
+    }
+
+    if(isset($_POST['btnHapusMhsAmbil'])){
+        $data = explode(",",$_POST['btnHapusMhsAmbil']);
+        $query = "DELETE FROM `Mengambil` WHERE NID = '{$data[2]}' AND NRP = {$data[0]} and `Kode Matkul` = {$data[1]} AND NID = '{$data[2]}'";
+        // ekesekusi hapus dari mata kuliah bersangkutan
+        if($db->executeGetScalar("SELECT COUNT(*) FROM NILAI WHERE NID = '{$data[2]}' AND NRP = {$data[0]} and `Kode Matkul` = {$data[1]} AND NID = '{$data[2]}'") > 0){
+            $db->executeNonQuery("DELETE FROM `Nilai` WHERE NID = '{$data[2]}' AND NRP = {$data[0]} and `Kode Matkul` = {$data[1]} AND NID = '{$data[2]}'");
+        }
+        if($db->executeNonQuery($query) == false){
+            $pesan = "Berhasil menghapus mahasiswa dari mengambil mata kuliah";
+        }
+    }
+
+    //Triger Tambah Pengambil
+    if(isset($_POST['btnTambahMengambil'])){
+        if($db->executeGetScalar("SELECT COUNT(*) FROM Mahasiswa WHERE NRP = '{$_POST['txtNrpMhs']}'") > 0 ){
+            $Query = "INSERT INTO mengambil VALUES('{$_POST['txtNrpMhs']}','{$_POST['kodeDosen']}','{$_POST['kodeMatKul']}')";
+            $db->executeNonQuery($Query);
+            $pesan = "Berhasil menambahkan ".$db->executeGetScalar("SELECT NAMA FROM Mahasiswa WHERE NRP = '{$_POST['txtNrpMhs']}'");
+        }
+        else{
+
+        }
+    }
+
+    function formMahasiswaMengambil(){
+        global $db;
+        ?>
+        <div class="row" id="dialogTambahPengambil">
+            <div class="col-xs-12">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Tambah Mahasiswa Mengambil Mata Kuliah <?php echo $db->executeGetScalar("SELECT `Nama Matkul` FROM `mata kuliah` WHERE `Kode Matkul` = '{$_GET['btnLihatPengajar']}'"); ?></h3>
+                        <!-- /.box-tools -->
+                    </div>
+                    <!-- /.box-header -->
+                    <form id="formTambahMatKul" class="form-horizontal" role="form" data-toggle="validator" method="post" >
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="txtNamaMatkul" class="col-sm-2 control-label">Mata Kuliah</label>
+
+                                <div class="col-sm-10" style="display: table;    vertical-align: middle;height: 30px;">
+                                    <span style="display: table-cell;vertical-align: middle;" ><?php echo $db->executeGetScalar("SELECT `Nama Matkul` FROM `mata kuliah` WHERE `Kode Matkul` = '{$_GET['btnLihatPengajar']}'"); ?></span>
+                                    <input type="hidden" name="kodeMatKul" value="<?php echo $_GET['btnLihatPengajar']; ?>">
+                                    <input type="hidden" name="kodeDosen" value="<?php echo $_GET['btnLihatMahasiswa']; ?>">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="txtNrpMhs" class="col-sm-2 control-label">NRP</label>
+
+                                <div class="col-sm-10">
+                                    <input type="text" name="txtNrpMhs" id="txtNrpMhs" class="form-control" required data-error="NRP Mahasiswa harus dimasukan!">
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                        </div><!-- /.box-body -->
+                        <div class="box-footer">
+                            <button type="submit" name="btnTambahMengambil" value="1" class="btn btn-success pull-right">Tambahkan</button>
+                            <button type="button" class="btn btn-default" id="btnCancelTambahPengambil">Cancel</button>
+                        </div><!-- /.box-footer -->
+                    </form>
+                </div>
+            </div> 
         </div>
         <?php
     }
@@ -235,6 +512,12 @@
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
+        <script src="asset/js/oe.min.js"></script>
+        <!-- Optionally, you can add Slimscroll and FastClick plugins.
+        Both of these plugins are recommended to enhance the
+        user experience. Slimscroll is required when using the
+        fixed layout. -->
+        <!--Data Tables-->
     </head>
     <!--
     BODY TAG OPTIONS:
@@ -261,7 +544,7 @@
         <!-- Main Header -->
         <header class="main-header">
             <!-- Logo -->
-            <a href="index2.html" class="logo">
+            <a href="index.php" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><b>i</b>OE</span>
                 <!-- logo for regular state and mobile devices -->
@@ -343,7 +626,7 @@
 
         <!-- Main content -->
         <section class="content">
-            <?php pesan(); ?>
+            <?php pesan(); pesanError();?>
             <div class="row">
                 <?php tableMataKuliah(); ?>
             </div>
@@ -374,7 +657,7 @@
                     </div>
                 </div>
             </div>
-            <?php lihatPengajar();?>
+            <?php updateMataKuliah(); lihatPengajar();?>
         </section>
         <!-- /.content -->
         </div>
@@ -391,25 +674,5 @@
         </footer>
         </div>
         <!-- ./wrapper -->
-
-        <!-- REQUIRED JS SCRIPTS -->
-        <!-- jQuery 2.2.3 -->
-        <!-- Bootstrap 3.3.6 -->
-        <script src="asset/js/bootstrap.min.js"></script>
-        <!-- AdminLTE App -->
-        <script src="asset/dist/js/app.min.js"></script>
-        <!--BS3 Validatorjs-->
-        <script src="asset/js/validator.min.js"></script>
-        <!--OnlineExam Min-->
-        <script src="asset/js/oe.min.js"></script>
-        <!-- Optionally, you can add Slimscroll and FastClick plugins.
-        Both of these plugins are recommended to enhance the
-        user experience. Slimscroll is required when using the
-        fixed layout. -->
-        <!--Data Tables-->
-        <script src="asset/plugins/datatables/jquery.dataTables.min.js"></script>
-        <!--BS DTB-->
-        <script src="asset/plugins/datatables/dataTables.bootstrap.min.js"></script>
-        <link rel="stylesheet" href="asset/plugins/datatables/dataTables.bootstrap.css">
     </body>
 </html>

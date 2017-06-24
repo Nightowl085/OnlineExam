@@ -33,13 +33,14 @@
 								</div>
 								<div></div>
 							</div>
-							<div class="col-lg-4 col-md-6 col-lg-offset-1 hidden-sm hidden-xs">
+							<div class="col-lg-4 col-md-6 col-lg-offset-1">
 								<form id="banner-signup" class="banner-signup text-center"  data-wow-duration="1.5s" action="#" method="post">
 									<h3 class="signup-title">Welcome!</h3>
 									<?php if($error != "") echo $error;?><br><br>
 									<input type="text" name="user" placeholder="NRP" required>
 									<input type="password" name="pass" placeholder="PASSWORD" required>
-									<button type="submit" value="1" name="loginRequest" class="btn">LOGIN</button>
+									<button type="submit" value="1" name="loginRequest" class="btn">LOGIN</button><br><br><br>
+									<a href="resetPassword.php">Lupa Password?</a>
 								</form>
 							</div>
 						</div>

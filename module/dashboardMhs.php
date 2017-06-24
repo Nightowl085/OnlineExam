@@ -18,27 +18,244 @@
     function menuMahasiswa(){
         ?> 
         <!-- Optionally, you can add icons to the links -->
-        <li class="active treeview">
-            <a href="#">
-                <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-                <span class="pull-right-container">
-                    <i class="fa fa-angle-left pull-right"></i>
-                </span>
-            </a>
-            <ul class="treeview-menu">
-                <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i>Ujian</a></li>
-                <li><a href="index2.html"><i class="fa fa-circle-o"></i>Transkrip Nilai</a></li>
-            </ul>
-        </li>
-        <li><a href="#"><i class="fa fa-user"></i> <span>Biodata</span></a></li>
+        <li><a href="index.php"><i class="fa fa-circle"></i> <span>Biodata</span></a></li>
+        <li><a href="transkripNilai.php"><i class="fa fa-circle"></i> <span>Laporan Nilai</span></a></li>
         <?php
     }
+	
+    
+    function nilaiMahasiswa(){
+        global $db;
+        $data = $db->executeGetArray("SELECT hu.Kode as 'Kode Ujian', mat.`Kode Matkul` ,mat.`Nama Matkul`, d.`Nama` as NamaDosen, n.Nilai
+        FROM
+        onlineexam.nilai n, onlineexam.`mata kuliah` mat, onlineexam.header_ujian hu, onlineexam.mengajar aj, onlineexam.dosen d
+        WHERE
+        aj.`Kode Matkul` = mat.`Kode Matkul` and hu.`Kode Matkul` = aj.`Kode Matkul` and hu.NID = aj.NID
+        AND n.`Kode Ujian` = hu.Kode and d.NID = hu.NID AND n.NRP = {$_SESSION['user']}");
+        ?>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">Nilai Milik <?php namaMahasiswa(); ?></h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table class="table table-bordered table-striped datatable" id="tabelTugas">
+                            <thead>
+                                <tr>
+                                <th>Kode Ujian</th>
+                                <th>Kode Mata Kuliah</th>
+                                <th>Mata Kuliah</th>
+                                <th>Pengajar</th>
+                                <th>Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php 
+                                if($data != null){
+                                    foreach($data as $value){
+                                        echo "
+                                        <tr>
+                                        <td>{$value['Kode Ujian']}</td>
+                                        <td>{$value['Kode Matkul']}</td>
+                                        <td>{$value['Nama Matkul']}</td>
+                                        <td>{$value['NamaDosen']}</td>
+                                        <td>{$value['Nilai']}</td>";
+                                    }
+                                }
+                                else{
+                                    ?>
+                                        <tr><td colspan="4" style="text-align:center">Tidak ada Nilai</td><td style="display:none"> </td><td style="display:none"> </td><td style="display:none"> </td></tr>
+                                    <?php
+                                    //https://stackoverflow.com/a/34012324 -> Ngakali
+                                }
+                            ?>
+                            </tbody>
+                            <tfooter>
+                                <tr>
+                                <th>Kode Ujian</th>
+                                <th>Kode Mata Kuliah</th>
+                                <th>Mata Kuliah</th>
+                                <th>Pengajar</th>
+                                <th>Nilai</th>
+                                </tr>
+                            </tfooter>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+        <?php
+    }
+
+	function tabelUjian(){
+        $todaydate=date("Y-m-d");
+        global $db;
+		//Ambil Soal Ujian berdasarkan user yang login
+        $data = $db->executeGetArray("SELECT * FROM header_ujian h, mengambil am where h.NID = am.NID and h.`Kode Matkul` = am.`Kode Matkul` and am.NRP = {$_SESSION['user']}");
+        ?>
+        <div class="box box-info">
+          <div class="box box-primary">
+            <div class="box-header">
+              <h3 class="box-title">Ujian</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="tabelUjian" class="table table-bordered table-striped datatable">
+                <thead>
+                    <tr>
+                    <th>Nama Ujian</th>
+                    <th>Tanggal</th>
+                    <th>Durasi</th>
+                    <th>Banyak Soal</th>
+                    <th>Kerjakan Soal</th>
+                    </tr>
+                </thead>
+                <tbody>
+            <?php
+            
+                if($data != null){
+					date_default_timezone_set('Asia/Jakarta');
+                    foreach($data as $value){
+						$checkingkode = $db->executeGetScalar("SELECT count(*) from nilai where `Kode Ujian` = {$value[0]} AND NRP = {$_SESSION['user']}");
+						
+                        if( new DateTime() >= new DateTime($value['Tanggal'])){
+							//Tambah 15 mnt
+								$limitdate = new DateTime($value['Tanggal']);
+								$firstdate = $limitdate->format('H:i:s');
+								$minutes_to_add = $db->executeGetScalar("SELECT Waktu from header_ujian where Kode={$value[0]}");
+								$limitdate-> add(new DateInterval('PT'. $minutes_to_add . 'M'));
+								
+								$dateStamp = $limitdate->format('H:i:s');
+								
+								$now = new DateTime();
+								$nowstamp = $now->format('H:i:s');
+								
+								if (new DateTime() > $limitdate){
+									$visible = "disabled";
+								}else{
+									$visible= "";
+									if($checkingkode>0){
+								$visible= "disabled";
+							}else{
+								$visible="";
+							}
+								}
+							}else{
+								$visible = "disabled";
+							}
+                        echo "
+                        <tr>
+                        <td>{$value[1]}</td>
+                        <td>{$value[2]}</td>
+                        <td>{$value[3]}</td>
+                        <td>{$value[4]}</td>
+                        <td><form action='KerjakanSoal.php' method='POST'><button class='btn btn-block btn-success btn-xs' value={$value[0]} name='kode' $visible>Kerjakan</button></form></td>
+                        </tr>";
+                    }
+                }
+            ?>
+              </tbody>
+                <tfoot>
+                    <tr>
+                    <th>Nama Nama Ujian</th>
+                    <th>Tanggal</th>
+                    <th>Durasi</th>
+                    <th>Banyak Soal</th>
+                    <th>Kerjakan Soal</th>
+                    </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <?php
+    }
+	
+
+    function tabelTugasMahasiswa(){
+        global $db;
+        $data = $db->executeGetArray("SELECT t.`Kode Tugas`,t.`Nama Tugas`, m.`Nama Matkul`, d.`Nama` as NamaDosen,t.`Tanggal_Kumpul`,t.`Keterangan Tugas` FROM `TUGAS` t, `Mengambil` am, Dosen d, `Mata Kuliah` m WHERE t.`Kode Matkul` = am.`Kode Matkul` AND t.`Kode Dosen` = am.NID AND am.NRP = {$_SESSION['user']} AND D.NID = am.NID AND m.`Kode Matkul` = am.`Kode Matkul` AND t.`Tanggal_Kumpul` >= CURDATE()");
+        ?>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Daftar Tugas
+                        </h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <table class="table table-bordered table-striped datatable" id="tabelTugas">
+                        <thead>
+                            <tr>
+                            <th>Kode Tugas</th>
+                            <th>Nama Tugas</th>
+                            <th>Mata Kuliah</th>
+                            <th>Dosen</th>
+                            <th>Tanggal Kumpul</th>
+                            <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php 
+                            if($data != null){
+                                foreach($data as $value){
+                                    echo "
+                                    <tr>
+                                    <td>{$value['Kode Tugas']}</td>
+                                    <td>{$value['Nama Tugas']}</td>
+                                    <td>{$value['Nama Matkul']}</td>
+                                    <td>{$value['NamaDosen']}</td>
+                                    <td>{$value['Tanggal_Kumpul']}</td>
+                                    <td><form method='get' action='kumpulTugas.php'><button class='btn btn-primary' name='kodeTugas' value='{$value['Kode Tugas']}' ";
+                                    // Cek apakah sudah lewat dari tgl/jam kumpul? Jika iya button di disable
+                                    if( new DateTime() > new DateTime($value['Tanggal_Kumpul']))
+                                        echo "disabled";
+                                    echo ">Kumpul</button></form></td>
+                                    </tr>";
+                                }
+                            }
+                            else{
+                                ?>
+                                    <tr><td colspan="6" style="text-align:center">Tidak ada Tugas</td><td style="display:none"> </td><td style="display:none"> </td><td style="display:none"> </td><td style="display:none"> </td><td style="display:none"> </td></tr>
+                                <?php
+                                //https://stackoverflow.com/a/34012324 -> Ngakali
+                            }
+                        ?>
+                        </tbody>
+                        <tfooter>
+                            <tr>
+                            <th>Kode Tugas</th>
+                            <th>Nama Tugas</th>
+                            <th>Mata Kuliah</th>
+                            <th>Dosen</th>
+                            <th>Tanggal Kumpul</th>
+                            <th>Aksi</th>
+                            </tr>
+                        </tfooter>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
     /**
      * Menampilkan Dahsboard MHS
      *
      * @return void
      */
     function dashboardMhs(){
+		$_SESSION['kode'] = "";
+		$_SESSION['page']="";
+		$_SESSION['judul']="";
         ?>
 <!DOCTYPE html>
 <html>
@@ -55,6 +272,11 @@
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
+        <script>
+        $(function(){
+            $(".datatable").DataTable();
+        });
+        </script>
     </head>
     <!--
     BODY TAG OPTIONS:
@@ -81,7 +303,7 @@
         <!-- Main Header -->
         <header class="main-header">
             <!-- Logo -->
-            <a href="index2.html" class="logo">
+            <a href="index.php" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><b>i</b>OE</span>
                 <!-- logo for regular state and mobile devices -->
@@ -111,12 +333,10 @@
                                 <li class="user-header">
                                     <img src="asset/img/user.jpg" class="img-circle" alt="User Image">
                                     <p>
-                                        <?php namaMahasiswa(); echo " - ".$_SESSION['user']; ?> 
-                                    </p>
+                                         <?php namaMahasiswa(); ?> - <?php echo $_SESSION['user']; ?>
                                 </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
-
                                     <div class="pull-right">
                                         <?php logout(); ?>
                                     </div>
@@ -145,7 +365,7 @@
         <!-- Sidebar Menu -->
             <ul class="sidebar-menu">
                 <li class="header">MENU</li>
-                <?php menuMahasiswa(); ?>
+                <?php menuMahasiswa("Awal");?>
             </ul>
         <!-- /.sidebar-menu -->
         </section>
@@ -163,173 +383,10 @@
 
         <!-- Main content -->
         <section class="content">
-            <!-- Your Page Content Here -->
-            <!-- NOTIF UJIAN -->
-            <div class="callout callout-danger lead">
-                <h4>Ujian Manajemen Keuangan!</h4>
-                <p>Ujian dulu lah <a href="../starter.html">di sini</a>.</p>
-            </div>
-            <!-- TABLE: UJIAN -->
-            <div class="box box-info">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Ujian</h3>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <div class="table-responsive">
-                        <table class="table no-margin">
-                            <thead>
-                                <tr>
-                                    <th>Nama Ujian</th>
-                                    <th>Tanggal</th>
-                                    <th>Jam</th>
-                                    <th>Durasi</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Proyek Bisnis 1</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td><button type="button" class="btn btn-block btn-success btn-xs disabled">Sudah</button></td>
-                                </tr>
-                                <tr>
-                                    <td>Desain Komunikasi Visual</td>
-                                    <td>6 Juni 2017</td>
-                                    <td>10.30</td>
-                                    <td>60 Menit</td>
-                                    <td><button type="button" class="btn btn-block btn-success btn-xs disabled">Sudah</button></td>
-                                </tr>
-                                <tr>
-                                    <td>Technopreneurship 1</td>
-                                    <td>8 Juni 2017</td>
-                                    <td>10.30</td>
-                                    <td>30 Menit</td>
-                                    <td><button type="button" class="btn btn-block btn-danger btn-xs disabled">Terlambat</button></td>
-                                </tr>
-                                <tr>
-                                    <td>Aplikasi Internet</td>
-                                    <td>8 Juni 2017</td>
-                                    <td>08.00</td>
-                                    <td>90 Menit</td>
-                                    <td><button type="button" class="btn btn-block btn-success btn-xs disabled">Sudah</button></td>
-                                </tr>
-                                <tr>
-                                    <td>Analisis Sistem Informasi Bisnis</td>
-                                    <td>13 Juni 2017</td>
-                                    <td>08.00</td>
-                                    <td>90 Menit</td>
-                                    <td><button type="button" class="btn btn-block btn-success btn-xs disabled">Sudah</button></td>
-                                </tr>
-                                <tr>
-                                    <td>Manajemen Keuangan</td>
-                                    <td>13 Juni 2017</td>
-                                    <td>13.00</td>
-                                    <td>100 Menit</td>
-                                    <td><button type="button" class="btn btn-block btn-warning btn-xs">Kerja</button></td>
-                                </tr>
-                                <tr>
-                                    <td>Teknologi Multimedia</td>
-                                    <td>14 Juni 2017</td>
-                                    <td>08.00</td>
-                                    <td>45 Menit</td>
-                                    <td><button type="button" class="btn btn-block btn-info btn-xs disabled">Belum</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                <!-- /.table-responsive -->
-                </div>
-            </div>
-            <!-- TABLE: NILAI -->
-            <div class="box box-info">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Transkrip Nilai</h3>
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                    </div>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <div class="table-responsive">
-                        <table class="table no-margin">
-                            <thead>
-                                <tr>
-                                    <th>Periode</th>
-                                    <th>Nama Ujian</th>
-                                    <th>Nilai</th>
-                                    <th>Grade</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>GASAL 2015/2016</td>
-                                    <td>ALGORITMA DAN PEMROGRAMAN 1</td>
-                                    <td>88.1</td>
-                                    <td>
-                                        <span class="label label-success">A</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>GENAP 2015/2016</td>
-                                    <td>BASIS DATA</td>
-                                    <td>70.4</td>
-                                    <td>
-                                        <span class="label label-success">B</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>GENAP 2015/2016</td>
-                                    <td>PEMROGRAMAN VISUAL</td>
-                                    <td>55</td>
-                                    <td>
-                                        <span class="label label-danger">D</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>GASAL 2016/2017</td>
-                                    <td>APLIKASI CLIENT SERVER</td>
-                                    <td>57.6</td>
-                                    <td>
-                                        <span class="label label-success">C</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>GASAL 2016/2017</td>
-                                    <td>PEMROGRAMAN BERORIENTASI OBJEK</td>
-                                    <td>79.5</td>
-                                    <td>
-                                        <span class="label label-success">B</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>GENAP 2016/2017</td>
-                                    <td>APLIKASI INTERNET</td>
-                                    <td>100</td>
-                                    <td>
-                                        <span class="label label-success">A</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>GENAP 2016/2017</td>
-                                    <td>MULTIMEDIA</td>
-                                    <td>100</td>
-                                    <td>
-                                        <span class="label label-success">A</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.table-responsive -->
-                </div>
-                <div class="box-footer clearfix">
-                <a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left">Cetak</a>
-                </div>
-            </div>
-                <!-- /.box -->
+            <?php  
+				tabelTugasMahasiswa();
+				tabelUjian();
+			?>
         </section>
         <!-- /.content -->
         </div>
@@ -346,18 +403,6 @@
         </footer>
         </div>
         <!-- ./wrapper -->
-
-        <!-- REQUIRED JS SCRIPTS -->
-        <!-- jQuery 2.2.3 -->
-        <!-- Bootstrap 3.3.6 -->
-        <script src="asset/js/bootstrap.min.js"></script>
-        <!-- AdminLTE App -->
-        <script src="asset/dist/js/app.min.js"></script>
-
-        <!-- Optionally, you can add Slimscroll and FastClick plugins.
-        Both of these plugins are recommended to enhance the
-        user experience. Slimscroll is required when using the
-        fixed layout. -->
     </body>
 </html>
         <?php

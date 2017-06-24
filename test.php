@@ -13,7 +13,15 @@
 		else 
 			echo "WOI DATA LU KOSONG!";
 	}
-	var_dump($db->executeGetArray("SELECT * FROM DOSEN"));
+	session_start();
+	var_dump(strpos("1D","D") === FALSE);
+	//var_dump($db->executeGetArray("SELECT * FROM DOSEN"));
+	var_dump(password_verify("123",'$2y$10$ioG9sv8nKpe5n0RtxhGBCOOBSaS2zZiLYH88EnLq06h6ReuAZV8bq'));
+
+	echo pathinfo("D:\halo.zip",PATHINFO_EXTENSION);
+	echo __DIR__;
+	echo realpath(__DIR__."/tugas");
+	var_dump(stat(__DIR__."\\testtext.txt"));
 ?>
 <h1>Gen Username Password</h1>
 <form method="post">

@@ -10,7 +10,7 @@
 			else if(strpos($_POST['user'],"D") === FALSE){// Mahasiswa
 				$user = $db->executeGetScalar("select count(*) from mahasiswa where nrp = '{$_POST['user']}'");
 				if($user > 0){// Apakah user terdaftar
-					$pass = $db->executeGetScalar("select password from mahasiswa where '{$_POST['user']}'");
+					$pass = $db->executeGetScalar("select password from mahasiswa where NRP = '{$_POST['user']}'");
 					if(password_verify($_POST['pass'],$pass)){// check password
 						$_SESSION['user'] = $_POST['user'];
 						$_SESSION['posisi'] = 'mahasiswa';
@@ -23,16 +23,17 @@
 					$error = "Username tidak terdaftar, Hubungi IT untuk keterangan lebih lanjut disini";
 			}
 			else{// Dosen
-				$user = $db->executeGetScalar("select count(*) from dosen where nrp = '{$_POST['user']}'");
+				$user = $db->executeGetScalar("select count(*) from dosen where nid = '{$_POST['user']}'");
 				if($user > 0){// Apakah user terdaftar
-					$pass = $db->executeGetScalar("select password from dosen where '{$_POST['user']}'");
+					$pass = $db->executeGetScalar("select password from dosen where nid = '{$_POST['user']}'");
 					if(password_verify($_POST['pass'],$pass)){// check password
 						$_SESSION['user'] = $_POST['user'];
 						$_SESSION['posisi'] = 'dosen';
 						header("Location: dashboard.php");
 					}
-					else
+					else{
 						$error = "Password anda salah. Jika anda lupa dengan password anda, silahkan reset password anda disini";
+					}
 				}
 				else
 					$error = "Username tidak terdaftar, Hubungi IT untuk keterangan lebih lanjut disini";
