@@ -188,7 +188,12 @@
         <div class="col-xs-12">
             <div class="box box-info">
                 <div class="box-header">
-                    <h3 class="box-title">Daftar Tugas</h3>
+                    <h3 class="box-title">Daftar Pengumpul</h3>
+					<div class="box-tools">
+                        <div class="input-group input-group-sm" style="width: 200px;">
+                            <a href="downloadTugas.php?kodeTugas=<?php echo $_GET['kodeTugas'] ?>"><button class="btn btn-success" style="display:inline-block;height: 30px;padding: 5px 10px; margin-right:10px;"><span class="glyphicon glyphicon-download-alt"></span> Download Semua</button></a>
+                        </div>
+                    </div>
                     <!-- /.box-tools -->
                 </div>
                 <!-- /.box-header -->
