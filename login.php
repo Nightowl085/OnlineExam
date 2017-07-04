@@ -8,12 +8,8 @@
 ?>
 <html>
 	<head>
-		<title>iSTTS Online Exam</title>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="description" content="iSTTS Online Exam">
-		
+	    <?php mainStyle(); mainScript(); validatorScript();?>
 		<link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700,800%7cRoboto:300,400,500,700" rel="stylesheet">
-		<?php assetLoad(); ?>
 		<link rel="stylesheet" href="asset/css/style.css">
 		<link rel="icon" href="asset/img/istts.png">
 	</head>

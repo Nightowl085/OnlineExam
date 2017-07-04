@@ -1,6 +1,6 @@
 <?php
     function menuAdmin($active){
-        ?> 
+?>
         <?php 
             $menu[0] = array("Awal","dashboard.php");
             $menu[1] = array( -1 => "Master Dosen",
@@ -21,7 +21,7 @@
                     if(!is_array($active)){
                         if($active == $data[0]) echo "class='active'";
                     }
-                ?> ><a href="<?php echo $data[1];?>"><i class="fa fa-circle-o"></i><span><?php echo $data[0];?></a></span></li>
+                ?>><a href="<?php echo $data[1];?>"><i class="fa fa-circle-o"></i><span><?php echo $data[0];?></a></span></li>
         <?php
                 }
                 else{
@@ -46,7 +46,7 @@
                 <?php } ?>
             </ul>
             </li>
-        <?php
+<?php
                 }
             }
     }
@@ -72,16 +72,11 @@
     }
 
     function dashboardAdmin(){
-         ?>
+ ?>
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>iSTTS Online Exam</title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <?php assetLoad(); ?>
+        <?php mainStyle(); mainScript(); ?>
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -201,7 +196,6 @@
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
-
                         <div class="info-box-content">
                             <span class="info-box-text">Jumlah Dosen</span>
                             <span class="info-box-number"><?php jumlahDosen(); ?></span>
@@ -211,7 +205,6 @@
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
-
                         <div class="info-box-content">
                             <span class="info-box-text">Jumlah Mahasiswa</span>
                             <span class="info-box-number"><?php jumlahMahasiswa(); ?></span>
@@ -223,7 +216,6 @@
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
-
                         <div class="info-box-content">
                             <span class="info-box-text">Jumlah Soal yang sudah dibuat</span>
                             <span class="info-box-number"><?php jumlahSoal(); ?></span>
@@ -233,7 +225,6 @@
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
-
                         <div class="info-box-content">
                             <span class="info-box-text">Nilai Rata-rata semua ujian</span>
                             <span class="info-box-number"><?php nilaiRataRata(); ?></span>
@@ -257,9 +248,8 @@
         </footer>
         </div>
         <!-- ./wrapper -->
-
     </body>
 </html>
-        <?php
+<?php
     }
 ?>

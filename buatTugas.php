@@ -5,15 +5,14 @@
     function pesan(){
         $pesan = $_SESSION['pesan'];
         if($pesan != ""){
-        ?>
+?>
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box box-success box-solid">
                         <div class="box-header with-border">
                             <h3 class="box-title">Sukses</h3>
-
                             <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                             </div>
                             <!-- /.box-tools -->
                         </div>
@@ -25,7 +24,7 @@
                     </div>
                 </div>
             </div>
-        <?php
+<?php
         }
     }
 
@@ -52,7 +51,7 @@
                     </div>
                 </div>
             </div>
-        <?php
+<?php
         }
     }
 
@@ -63,12 +62,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>iSTTS Online Exam</title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <?php assetLoad(); ?>
+        <?php mainStyle(); datePickStyle(); mainScript(); validatorScript(); datePickScript();?>
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -79,7 +73,6 @@
         Both of these plugins are recommended to enhance the
         user experience. Slimscroll is required when using the
         fixed layout. -->
-        <!--Data Tables-->
     </head>
     <!--
     BODY TAG OPTIONS:
@@ -141,7 +134,6 @@
                                 </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
-
                                     <div class="pull-right">
                                         <?php logout(); ?>
                                     </div>
@@ -181,9 +173,7 @@
         <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>
-                Master Mata Kuliah
-            </h1>
+            <h1>Master Mata Kuliah</h1>
         </section>
 
         <!-- Main content -->
@@ -194,7 +184,6 @@
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="txtIdDosen" >Mata Kuliah</label>
-
                                     <select name="kodeMatkul" id="txtIdDosen" class="form-control" required data-error="Dosen yang mengajar harus dipilih!">
                                     <?php
                                         $query = "SELECT m.`Kode Matkul` AS Kode, ma.`Nama Matkul` as Nama FROM onlineexam.mengajar m, onlineexam.`mata kuliah` ma where m.`Kode Matkul` = ma.`Kode Matkul` AND m.`NID` = '{$_SESSION['user']}'";

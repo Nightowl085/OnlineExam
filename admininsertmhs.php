@@ -6,12 +6,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>iSTTS Online Exam</title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <?php assetLoad(); ?>
+        <?php mainStyle(); mainScript(); validatorScript();?>
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -22,7 +17,6 @@
         Both of these plugins are recommended to enhance the
         user experience. Slimscroll is required when using the
         fixed layout. -->
-        <!--Data Tables-->
     </head>
     <!--
     BODY TAG OPTIONS:
@@ -134,7 +128,7 @@
             </section>
 
             <section class="content">
-              <?php  if(!isset($_GET['update'])){?>
+                <?php  if(!isset($_GET['update'])){ ?>
                 <form role="form" action="insertmhs.php" method="post" data-toggle="validator">
                     <div class="box box-primary">
                         <div class="box-body">
@@ -183,12 +177,11 @@
                     </div>
                     <button type="submit" class="btn btn-block btn-primary btn-lg">INSERT</button>
                 </form>
-              <?php } else {
+                <?php } else{
                 $conn = new mysqli("localhost", "root", "", "onlineexam");
                 $sql = "SELECT * FROM mahasiswa WHERE NRP = $_GET[nrp]";
                 $result = $conn->query($sql);
                 $row = $result->fetch_assoc();
-
                 ?>
                 <form role="form" action="updatemhs.php?nrp=<?php echo $_GET['nrp']?>" method="post">
                     <div class="box box-primary">
@@ -254,6 +247,5 @@
         </footer>
     </div>
     <!-- ./wrapper -->
-
 </body>
 </html>
