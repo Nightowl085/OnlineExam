@@ -5,15 +5,14 @@
     function pesan(){
         global $pesan;
         if($pesan != ""){
-        ?>
+?>
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box box-success box-solid">
                         <div class="box-header with-border">
                             <h3 class="box-title">Sukses</h3>
-
                             <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                             </div>
                             <!-- /.box-tools -->
                         </div>
@@ -25,22 +24,21 @@
                     </div>
                 </div>
             </div>
-        <?php
+<?php
         }
     }
 
     function pesanError(){
         global $pesanError;
         if($pesanError != ""){
-        ?>
+?>
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box box-danger box-solid">
                         <div class="box-header with-border">
                             <h3 class="box-title">Gagal</h3>
-
                             <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                             </div>
                             <!-- /.box-tools -->
                         </div>
@@ -52,7 +50,7 @@
                     </div>
                 </div>
             </div>
-        <?php
+<?php
         }
     }
 
@@ -63,12 +61,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>iSTTS Online Exam</title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <?php assetLoad(); ?>
+        <?php mainStyle(); dataTableStyle(); mainScript(); dataTableScript();?>
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -80,7 +73,6 @@
         Both of these plugins are recommended to enhance the
         user experience. Slimscroll is required when using the
         fixed layout. -->
-        <!--Data Tables-->
     </head>
     <!--
     BODY TAG OPTIONS:
@@ -202,37 +194,40 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-            <?php pesan(); pesanError();
-            ?>
+            <?php pesan(); pesanError(); ?>
             <table id="tabelMataKuliah" class="table table-bordered table-striped datatable">
                 <thead>
                     <tr>
-                    <th>Kode Tugas</th>
-                    <th>Nama Tugas</th>
-                    <th>Tanggal Kumpul</th>
-                    <th>Keterangan</th>
-                    <th>Mata Kuliah</th>
+                        <th>Kode Tugas</th>
+                        <th>Nama Tugas</th>
+                        <th>Tanggal Kumpul</th>
+                        <th>Keterangan</th>
+                        <th>Mata Kuliah</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
             <?php
                 $data = $db->executeGetArray("SELECT * FROM Tugas WHERE `kode Dosen` = '{$_SESSION['user']}'");
-                if(count($data) > 0) {
+                if(count($data) > 0){
                     foreach($data as $val){
-                        echo "<tr><td>{$val[0]}</td><td>{$val[5]}</td><td>{$val[3]}</td><td>{$val[4]}</td><td>{$db->executeGetScalar("SELECT `nama matkul` from `mata kuliah` where `kode matkul` = '{$val[1]}'")} <a href='lihatPengumpul.php?kodeTugas={$val[0]}' class='btn btn-info'>Lihat Pengumpul</a> <form style='display:inline' method='post'><button name='hapus' value='{$val[0]}' class='btn btn-danger'>Hapus Tugas</button></form></td></tr>";
+                        echo "<tr><td>{$val[0]}</td><td>{$val[5]}</td><td>{$val[3]}</td><td>{$val[4]}</td><td>{$db->executeGetScalar("SELECT `nama matkul` from `mata kuliah` where `kode matkul` = '{$val[1]}'")}</td><td><a href='lihatPengumpul.php?kodeTugas={$val[0]}' class='btn btn-info btn-xs'>Lihat Pengumpul</a></td><td><form style='display:inline' method='post'><button name='hapus' value='{$val[0]}' class='btn btn-danger btn-xs'>Hapus Tugas</button></form></td></tr>";
                     }
                 }
             ?>
             <tbody>
-                <tfooter>
+                <tfoot>
                     <tr>
-                    <th>Kode Tugas</th>
-                    <th>Nama Tugas</th>
-                    <th>Tanggal Kumpul</th>
-                    <th>Keterangan</th>
-                    <th>Mata Kuliah</th>
+                        <th>Kode Tugas</th>
+                        <th>Nama Tugas</th>
+                        <th>Tanggal Kumpul</th>
+                        <th>Keterangan</th>
+                        <th>Mata Kuliah</th>
+                        <th></th>
+                        <th></th>
                     </tr>
-                </tfooter>
+                </tfoot>
             </table>
             <Script>
             $(function(){

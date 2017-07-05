@@ -1,5 +1,4 @@
 <?php
-
     /**
      * Fungsi Menambah Tugas, panggil Fungsi Ini, agar tugasnya bisa dibuat
      *
@@ -92,13 +91,12 @@
         $_SESSION['pesan'] = "Tugas Mata Kuliah ".$namaMatkul." Berhasil dihapus!";
     }
 
-
     function nilaiMataKuliah($kodeMataKuliah){
         global $db;
         $data = $db->executeGetArray("SELECT mhs.NRP, mhs.Nama, n.Nilai  FROM onlineexam.mengajar aj, onlineexam.header_ujian, onlineexam.nilai n , onlineexam.mengambil am, onlineexam.mahasiswa mhs WHERE aj.NID = am.NID and aj.`Kode Matkul` = am.`Kode Matkul` and mhs.NRP = am.NRP and n.NRP = am.NRP and mhs.NRP = am.NRP and am.`Kode Matkul` = n.`Kode Matkul` and aj.NID = n.NID and aj.NID = '{$_SESSION['user']}' AND aj.`Kode Matkul` = $kodeMataKuliah
         UNION
         SELECT mhs.NRP, mhs.Nama, 0 as Nilai FROM onlineexam.mahasiswa mhs, onlineexam.mengambil am WHERE am.NRP = mhs.NRP and am.`Kode Matkul` = $kodeMataKuliah and am.NID = '{$_SESSION['user']}' and  mhs.nrp not in (SELECT mhs.NRP FROM onlineexam.mengajar aj, onlineexam.header_ujian, onlineexam.nilai n , onlineexam.mengambil am, onlineexam.mahasiswa mhs WHERE aj.NID = am.NID and aj.`Kode Matkul` = am.`Kode Matkul` and mhs.NRP = am.NRP and n.NRP = am.NRP and mhs.NRP = am.NRP and am.`Kode Matkul` = n.`Kode Matkul` and aj.NID = n.NID and aj.NID = '{$_SESSION['user']}' AND aj.`Kode Matkul` = $kodeMataKuliah)");
-        ?>
+?>
             <div class="box box-info">
                 <div class="box-header with-border">
                     <h3 class="box-title">Nilai Mata Kuliah <?php echo $db->executeGetScalar("SELECT `nama matkul` FROM `Mata Kuliah` where `Kode Matkul` = '$kodeMataKuliah'"); ?></h3>
@@ -120,21 +118,21 @@
                             <td><?php echo $value["Nama"]; ?></td>
                             <td><?php echo $value["Nilai"]; ?></td>
                             </tr>
-                        <?php
-                            }
-                        ?>
+                            <?php
+                                }
+                            ?>
                         </tbody>
                     </table>
                     
                 </div>
             </div>
-        <?php
+<?php
     }
 
     function tabelMengajar(){
         global $db;
         $data = $db->executeGetArray("SELECT * FROM `mengajar` aj, `Mata Kuliah` m WHERE aj.`Kode Matkul` = m.`Kode Matkul` AND aj.NID = '{$_SESSION['user']}'");
-        ?>
+?>
         <div class="box box-info">
             <div class="box-header with-border">
                 <h3 class="box-title">Kuliah Yang Diajar</h3>
@@ -143,31 +141,31 @@
             <div class="box-body">
                 <table id="tabelNilaiUjian" class="table table-bordered table-striped datatable">
                     <thead>
-                    <tr>
-                        <th>Kode Matkul</th>
-                        <th>Nama Mata Kuliah</th>
-                        <th>Aksi</th>
-                    </tr>
+                        <tr>
+                            <th>Kode Matkul</th>
+                            <th>Nama Mata Kuliah</th>
+                            <th>Aksi</th>
+                        </tr>
                     </thead>
                     <tbody>
                         <?php foreach($data as $value) {?>
                         <tr>
-                        <td><?php echo $value["Kode Matkul"]; ?></td>
-                        <td><?php echo $value["Nama Matkul"]; ?></td>
-                        <td><form method='get' action='lihatNilaiDosen.php'><button name='btnLihatNilai' value='<?php echo $value['Kode Matkul'] ?>'>List Nilai Mahasiswa</button></form></td>
+                            <td><?php echo $value["Kode Matkul"]; ?></td>
+                            <td><?php echo $value["Nama Matkul"]; ?></td>
+                            <td><form method='get' action='lihatNilaiDosen.php'><button class="btn btn-success btn-block btn-xs" name='btnLihatNilai' value='<?php echo $value['Kode Matkul'] ?>'>List Nilai Mahasiswa</button></form></td>
                         </tr>
-                    <?php
-                        }
-                    ?>
+                        <?php
+                            }
+                        ?>
                     </tbody>
                 </table>
             </div>
         </div>
-        <?php
+<?php
     }
 
     function menuDosen($active){
-        ?> 
+?> 
         <?php 
             $menu[0] = array("Awal","dashboard.php");
             $menu[1] = array( -1 => "Master Tugas",
@@ -208,7 +206,7 @@
                 <?php } ?>
             </ul>
             </li>
-        <?php
+<?php
                 }
             }
     }
@@ -237,13 +235,13 @@
             </div>
             <!-- /.modal -->
             </form>
-        <?php
+<?php
     }
 	// tabel ujian abraham
     function tabel_ujian(){
         global $db;
         $test = $db->executeGetArray("select * from header_ujian WHERE `NID` = '{$_SESSION['user']}'");
-	?>
+?>
 
             <!-- TABLE: UJIAN -->
             <div class="box box-info">
@@ -259,19 +257,19 @@
                 <div class="box-body">
 					<table id="tabelUjian" class="table table-bordered table-striped datatable">
 						<thead>
-						<tr>
-							<th>Nama Ujian</th>
-							<th>Tanggal</th>
-							<th>Durasi</th>
-							<th>Banyak Soal</th>
-							<th>Edit Header</th>
-							<th>Edit Soal</th>
-							<th>Delete Soal</th>
-							<th>Lanjutkan Soal</th>
-						  </tr>
+                            <tr>
+                                <th>Nama Ujian</th>
+                                <th>Tanggal</th>
+                                <th>Durasi</th>
+                                <th>Banyak Soal</th>
+                                <th>Edit Header</th>
+                                <th>Edit Soal</th>
+                                <th>Delete Soal</th>
+                                <th>Lanjutkan Soal</th>
+                            </tr>
 						</thead>
 						<tbody>
-							<?php for ($i = 0; $i < count($test); $i++) {?>
+                        <?php for ($i = 0; $i < count($test); $i++) {?>
 						<tr>
 							<td><?php echo $test[$i]["Nama"]; ?></td>
 							<td><?php echo $test[$i]["Tanggal"]; ?></td>
@@ -290,11 +288,9 @@
 							</td>
 							<td>
 								<form action="DetailUjian.php" method="POST"><button class="btn btn-block btn-success btn-xs" value="<?php echo $test[$i]["Kode"]?>" <?php echo soalSelesai($test[$i]["Kode"]); ?> name="Lanjut">Lanjutkan</button>
-							</form>
+							    </form>
 							</td>
-							
-								<!--<form action="HapusHSoal.php" method="POST"><button class="btn btn-block btn-danger btn-xs" data-toggle="modal" data-target="#myModal">Hapus</button></form></td>-->
-							</tr>
+                        </tr>
 						<?php
 							}
 						?>
@@ -302,7 +298,7 @@
 					</table>
                 </div>
             </div>
-	<?php
+<?php
 	delete();
     }
 	
@@ -319,17 +315,11 @@
 			//Hapus dari Header
 			$db->executeNonQuery("DELETE FROM `header_ujian` WHERE `header_ujian`.`Kode` = '$kode'");
 		}   
-              ?>
-		
+?>	
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>iSTTS Online Exam</title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <?php assetLoad(); ?>
+        <?php mainStyle(); dataTableStyle(); mainScript(); dataTableScript(); ?>
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -411,7 +401,6 @@
                                 </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
-
                                     <div class="pull-right">
                                         <?php logout(); ?>
                                     </div>
@@ -451,9 +440,7 @@
         <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>
-                Dashboard
-            </h1>
+            <h1>Dashboard</h1>
         </section>
 
         <!-- Main content -->
@@ -478,5 +465,6 @@
         <!-- ./wrapper -->
     </body>
 </html>
-        <?php
+<?php
     }
+?>

@@ -1,5 +1,4 @@
 <?php
-
 $modulTidakDiperlukan = ['2.loginCheck.php','dashboardMhs.php','dashboardMhs.php'];
     include_once("module/module.php");
     include_once("module/1.database.php");
@@ -20,41 +19,32 @@ if( isset($_POST['insert'])){
         $pesan = ' Sukses Insert Dosen dengan Nama :  '.$nama.' , NID : '.$nid.'!';
     }
 }
-  
 
-
-
-    function pesan(){
-        global $pesan;
-        if($pesan != ""){
-        ?>
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box box-success box-solid">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">Sukses</h3>
-
-                            <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                            </div>
-                            <!-- /.box-tools -->
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-                            <?php echo $pesan; ?>
-                        </div>
-                        <!-- /.box-body -->
+function pesan(){
+    global $pesan;
+    if($pesan != ""){
+?>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-success box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Sukses</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                     </div>
+                    <!-- /.box-tools -->
                 </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <?php echo $pesan; ?>
+                </div>
+                <!-- /.box-body -->
             </div>
-        <?php
-        }
+        </div>
+    </div>
+<?php
     }
-
-
-
-
-
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -64,7 +54,7 @@ if( isset($_POST['insert'])){
     <title>iSTTS Online Exam</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.6 -->
+    <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="asset/css/bootstrap.min.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
@@ -76,12 +66,8 @@ if( isset($_POST['insert'])){
     <link rel="stylesheet" href="asset/plugins/timepicker/bootstrap-timepicker.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="asset/dist/css/AdminLTE.min.css">
-    <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
-        page. However, you can choose any other skin. Make sure you
-        apply the skin class to the body tag so the changes take effect.
-    -->
+    <!-- AdminLTE Skins -->
     <link rel="stylesheet" href="asset/dist/css/skins/skin-blue.min.css">
-
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -109,7 +95,6 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-
 <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
         <!-- Main Header -->
@@ -189,12 +174,8 @@ desired effect
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
-           
             <section class="content-header">
-                <h1>
-                    Master Dosen
-                   
-                </h1>
+                <h1>Master Dosen</h1>
             </section>
 
             <section class="content">
@@ -205,26 +186,26 @@ desired effect
                             <div class="form-group">
                                 <label for="exampleInputEmail1">NID Dosen</label>
                                 <input type="text" name='nid' class="form-control" id="exampleInputEmail1" placeholder="Masukkan Nomor Induk Dosen" data-error="Data harus diisi!"  required>
-                                 <div class="help-block with-errors"></div>
+                                <div class="help-block with-errors"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Password</label>
                                 <input type="password"  name='pass' class="form-control" id="exampleInputEmail1"placeholder="Masukkan Password" data-error="Data harus diisi!" required>
-                                 <div class="help-block with-errors"></div>
+                                <div class="help-block with-errors"></div>
                             </div>
 
                             <!-- Date -->
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Nama</label>
                                 <input type="text" name='nama' class="form-control" id="exampleInputEmail1" placeholder="Masukan Nama Dosen" data-error="Data harus diisi!" required>
-                                 <div class="help-block with-errors"></div>
+                                <div class="help-block with-errors"></div>
                             </div>
 
                             <div class="form-group">
                                 <label>Alamat</label>
                                 <input type="text"  name='alamat' class="form-control" id="exampleInputEmail1"placeholder="Masukkan Alamat"  data-error="Data harus diisi!" required>
-                                 <div class="help-block with-errors"></div>
+                                <div class="help-block with-errors"></div>
                             </div>
 
                             <div class="form-group">
@@ -245,11 +226,9 @@ desired effect
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
                                     <input type="email"  name='email' class="form-control" placeholder="Email" data-error="Data harus diisi!" required>
-                                     
                                 </div>
                                 <div class="help-block with-errors"></div>
                             </div>
-
                         </div>
                         <!-- /.box-body -->
                     </div>
@@ -274,7 +253,7 @@ desired effect
     <!-- REQUIRED JS SCRIPTS -->
     <!-- jQuery 2.2.3 -->
     <script src="asset/plugins/jQuery/jquery-2.2.3.min.js"></script>
-    <!-- Bootstrap 3.3.6 -->
+    <!-- Bootstrap 3.3.7 -->
     <script src="asset/js/bootstrap.min.js"></script>
     <!-- bootstrap datepicker -->
     <script src="asset/plugins/datepicker/bootstrap-datepicker.js"></script>
@@ -284,12 +263,10 @@ desired effect
     <script src="asset/dist/js/app.min.js"></script>
     <!-- Page script -->
     <!--BS3 Validatorjs-->
-        <script src="asset/js/validator.min.js"></script>
-        <!--Data Tables-->
-        <script src="asset/plugins/datatables/jquery.dataTables.min.js"></script>
-        <!--BS DTB-->
-        <script src="asset/plugins/datatables/dataTables.bootstrap.min.js"></script>
-        <link rel="stylesheet" href="asset/plugins/datatables/dataTables.bootstrap.css">
+    <script src="asset/js/validator.min.js"></script>
+    <!--BS DTB-->
+    <script src="asset/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <link rel="stylesheet" href="asset/plugins/datatables/dataTables.bootstrap.css">
     <script>
         $(function() {
             //Date picker
@@ -303,10 +280,5 @@ desired effect
             });
         });
     </script>
-    
-    <!-- Optionally, you can add Slimscroll and FastClick plugins.
-     Both of these plugins are recommended to enhance the
-     user experience. Slimscroll is required when using the
-     fixed layout. -->
 </body>
 </html>
