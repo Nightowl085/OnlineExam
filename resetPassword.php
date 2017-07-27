@@ -42,7 +42,6 @@
         } else {
             $pesan = "Request Reset Password sudah dikirim! Silahkan Cek E-Mail anda!";
         }
-
     }
 
     function RandomString(){ //https://stackoverflow.com/questions/4356289/php-random-string-generator with change
@@ -105,13 +104,12 @@
     function pesanError(){
         global $pesanError;
         if($pesanError != ""){
-        ?>
+?>
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box box-danger box-solid">
                         <div class="box-header with-border">
                             <h3 class="box-title">Gagal</h3>
-
                             <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                             </div>
@@ -125,20 +123,19 @@
                     </div>
                 </div>
             </div>
-        <?php
+<?php
         }
     }
 
     function pesan(){
         global $pesan;
         if($pesan != ""){
-        ?>
+?>
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box box-success box-solid">
                         <div class="box-header with-border">
                             <h3 class="box-title">Berhasil</h3>
-
                             <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                             </div>
@@ -152,13 +149,16 @@
                     </div>
                 </div>
             </div>
-        <?php
+<?php
         }
     }
-
     include_once("module/asset.php");
-    assetLoad();
-?><title>Reset Password</title> <?php
+    mainStyle();
+    mainScript();
+    validatorScript();
+?>
+    <title>Reset Password</title>
+<?php
     if(isset($_POST['btnGenPass'])){
         $newPassword = password_hash($_POST['password'],PASSWORD_BCRYPT); 
         if(strpos($db->executeGetScalar("SELECT USERID From `reset_password` where kode = '{$_POST['reqKey']}'"),"D") !== FALSE){
@@ -175,78 +175,59 @@
     if(isset($_GET['reqPassCode'])){
         if($db->executeGetScalar("SELECT COUNT(*) FROM `reset_password` where kode = '{$_GET['reqPassCode']}' and status = false") > 0){
 ?>
-    <div class="content-wrapper" style="margin:0;">
-    
-    <!-- Main content -->
-    <section class="content">
-      <div class="error-page">
-          <br><br><br><br><br><br>
-          <?php pesanError(); pesan(); ?>
-        <h2 style="margin-top:20px;" class="headline text-Yellow">🔑</h2>
-
-        <div class="error-content">
-            
-          <h3><i class="fa fa-warning text-yellow"></i> Reset Password</h3>
-
-          <p>
-            Silahkan memasukan Password Baru anda.
-            <form id="reqPassword" method="post" action="resetPassword.php">
-                <input type="hidden" name="reqKey" value="<?php echo $_GET['reqPassCode']; ?>">
-                <input type="password" class="form-control" maxlength="10" name='password' placeholder="Passsord Baru" Required><br>
-                <button name="btnGenPass" class="btn btn-primary" value="1">Reset Password</button>
-            </form>
-          </p>
-
-        </div>
-        <!-- /.error-content -->
-      </div>
-      <!-- /.error-page -->
-    </section>
-    <!-- /.content -->
-  </div>
-
+            <div class="content-wrapper" style="margin:0;">
+            <!-- Main content -->
+            <section class="content">
+                <div class="error-page">
+                    <br><br><br><br><br><br>
+                    <?php pesanError(); pesan(); ?>
+                    <h2 style="margin-top:20px;" class="headline text-Yellow">🔑</h2>
+                    <div class="error-content">
+                        <h3><i class="fa fa-warning text-yellow"></i> Reset Password</h3>
+                        <p>
+                            Silahkan memasukan Password Baru anda.
+                            <form id="reqPassword" method="post" action="resetPassword.php">
+                                <input type="hidden" name="reqKey" value="<?php echo $_GET['reqPassCode']; ?>">
+                                <input type="password" class="form-control" maxlength="10" name='password' placeholder="Passsord Baru" Required><br>
+                                <button name="btnGenPass" class="btn btn-primary" value="1">Reset Password</button>
+                            </form>
+                        </p>
+                    </div>
+                    <!-- /.error-content -->
+                </div>
+              <!-- /.error-page -->
+            </section>
+            <!-- /.content -->
+            </div>
 <?php
-        }
-        else{
+        } else{
             header("Location: 404");
         }
-?> 
-    
-<?php
-    }
-    else{
+    } else{
 ?>
-
-<div class="content-wrapper" style="margin:0;">
-    
-    <!-- Main content -->
-    <section class="content">
-      <div class="error-page">
-          <br><br><br><br><br><br>
-          <?php pesanError(); pesan(); ?>
-        <h2 style="margin-top:20px;" class="headline text-Yellow">🔑</h2>
-
-        <div class="error-content">
-            
-          <h3><i class="fa fa-warning text-yellow"></i> Reset Password</h3>
-
-          <p>
-            Lupa password? Silahkan Masukan NRP/NID Anda. Kami akan mengirimkan E-Mail Reset Password kepada anda agar anda bisa mereset password anda
-            <form id="reqPassword" method="post">
-                <input type="text" class="form-control" maxlength="10" name='userid' placeholder="NRP/NID Anda"><br>
-                <button name="btnReqPass" class="btn btn-primary" value="1">Reset Password</button>
-            </form>
-          </p>
-
-        </div>
-        <!-- /.error-content -->
-      </div>
-      <!-- /.error-page -->
-    </section>
-    <!-- /.content -->
-
-<?php } ?>
-  <!-- Bootstrap 3.3.6 -->
-<script src="asset/js/bootstrap.min.js"></script>
-<!-- AdminLTE App -->
-<script src="asset/dist/js/app.min.js"></script>
+    <div class="content-wrapper" style="margin:0;">
+        <!-- Main content -->
+        <section class="content">
+            <div class="error-page">
+                <br><br><br><br><br><br>
+                <?php pesanError(); pesan(); ?>
+                <h2 style="margin-top:20px;" class="headline text-Yellow">🔑</h2>
+                <div class="error-content">
+                    <h3><i class="fa fa-warning text-yellow"></i> Reset Password</h3>
+                    <p>
+                        Lupa password? Silahkan Masukan NRP/NID Anda. Kami akan mengirimkan E-Mail Reset Password kepada anda agar anda bisa mereset password anda
+                        <form id="reqPassword" method="post">
+                            <input type="text" class="form-control" maxlength="10" name='userid' placeholder="NRP/NID Anda"><br>
+                            <button name="btnReqPass" class="btn btn-primary" value="1">Reset Password</button>
+                        </form>
+                    </p>
+                </div>
+                <!-- /.error-content -->
+            </div>
+          <!-- /.error-page -->
+        </section>
+        <!-- /.content -->
+    </div>
+<?php 
+    }
+?>
