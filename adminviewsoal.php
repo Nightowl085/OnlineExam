@@ -4,7 +4,6 @@
 	// Prevent Bruteforce From Other than Dosen
     if(strpos($_SESSION['user'],"D") === FALSE) header("Location: 404");
 
-
 	// Paginantation 
 	if(isset($_POST['whattodo']) || isset($_POST['page'])){
 		if(isset($_POST['whattodo'])){
@@ -29,47 +28,17 @@
 ?>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>iSTTS Online Exam</title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <?php assetLoad(); ?>
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-        <!-- Optionally, you can add Slimscroll and FastClick plugins.
-        Both of these plugins are recommended to enhance the
-        user experience. Slimscroll is required when using the
-        fixed layout. -->
-        <!--Data Tables-->
-    </head>
-    <!--
-    BODY TAG OPTIONS:
-    =================
-    Apply one or more of the following classes to get the
-    desired effect
-    |---------------------------------------------------------|
-    | SKINS         | skin-blue                               |
-    |               | skin-black                              |
-    |               | skin-purple                             |
-    |               | skin-yellow                             |
-    |               | skin-red                                |
-    |               | skin-green                              |
-    |---------------------------------------------------------|
-    |LAYOUT OPTIONS | fixed                                   |
-    |               | layout-boxed                            |
-    |               | layout-top-nav                          |
-    |               | sidebar-collapse                        |
-    |               | sidebar-mini                            |
-    |---------------------------------------------------------|
-    -->
-    <body class="hold-transition skin-blue sidebar-mini">
-        <div class="wrapper">
+<head>
+    <?php mainStyle(); mainScript(); ?>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
         <!-- Main Header -->
         <header class="main-header">
             <!-- Logo -->
@@ -108,7 +77,6 @@
                                 </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
-
                                     <div class="pull-right">
                                         <?php logout(); ?>
                                     </div>
@@ -150,70 +118,69 @@
         <section class="content-header">
             <h1>
 				<?php echo $judul;?>
-				<small><?php $soalselesai=False;
-							$no = (5 * $_SESSION['page'])+1;
-							$tonext = $no+4;
-
-
-							if ($tonext >= $_SESSION["banyakSoal"]){
-								$tonext = $_SESSION["banyakSoal"];
-								$soalselesai=True;
-							}
-							
-								echo "Halaman ". ($_SESSION['page']+1). " dari ".(ceil($_SESSION["banyakSoal"]/5))   ?></small>
+				<small>
+                <?php $soalselesai=False;
+                    $no = (5 * $_SESSION['page'])+1;
+                    $tonext = $no+4;
+                    if ($tonext >= $_SESSION["banyakSoal"]){
+                        $tonext = $_SESSION["banyakSoal"];
+                        $soalselesai=True;
+                    }
+                    echo "Halaman ". ($_SESSION['page']+1). " dari ".(ceil($_SESSION["banyakSoal"]/5));
+                ?>
+                </small>
 			</h1>
         </section>
 
         <!-- Main content -->
         <section class="content">
-                <?php
-    for ($i = $no-1; $i < $tonext; $i++) {?>
-                <!-- YOUR CONTENT -->
-                <form role="form" action="EditSoal.php" method="post">
-                    <div class="box box-info">
-                        <div class="box-header with-border">
-                            <h3 class="box-title"><?php echo $test[$i]["Nomor"];?> <button type="submit" class="btn btn-primary btn-lg" value="<?php echo $test[$i]["Nomor"]?>" name='Nomor'>Edit</button></h3>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-                            <!-- textarea -->
-                            <div class="form-group">
-                                <label><?php echo $test[$i]["Soal"];?></label>
-                            </div>
-                            <div class="input-group">
-                                <label>A.</label> <?php  echo $test[$i]["A"];?>
-                            </div>
-                            <div class="input-group">
-                                <label>B.</label> <?php echo $test[$i]["B"]?>
-                            </div>
-                            <div class="input-group">
-                                <label>C.</label> <?php echo $test[$i]["C"]?>
-                            </div>
-                            <div class="input-group">
-                                <label>D.</label> <?php echo $test[$i]["D"]?>
-                            </div>
-                            <div class="input-group">
-                                <label>E.</label> <?php echo $test[$i]["E"]?>
-                            </div>
-                            <br>
-                            <div class="input-group">
-                                <label>Jawaban: <?php echo $test[$i]["Jawaban"]?></label>
-                            </div>
-                        </div>
-                        <!-- /.box-body -->
+    <?php
+        for ($i = $no-1; $i < $tonext; $i++) {
+    ?>
+            <!-- YOUR CONTENT -->
+            <form role="form" action="EditSoal.php" method="post">
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><?php echo $test[$i]["Nomor"];?> <button type="submit" class="btn btn-primary btn-lg" value="<?php echo $test[$i]["Nomor"]?>" name='Nomor'>Edit</button></h3>
                     </div>
-                    </form>
-                <?php
-    }
-?>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <!-- textarea -->
+                        <div class="form-group">
+                            <label><?php echo $test[$i]["Soal"];?></label>
+                        </div>
+                        <div class="input-group">
+                            <label>A.</label> <?php  echo $test[$i]["A"];?>
+                        </div>
+                        <div class="input-group">
+                            <label>B.</label> <?php echo $test[$i]["B"]?>
+                        </div>
+                        <div class="input-group">
+                            <label>C.</label> <?php echo $test[$i]["C"]?>
+                        </div>
+                        <div class="input-group">
+                            <label>D.</label> <?php echo $test[$i]["D"]?>
+                        </div>
+                        <div class="input-group">
+                            <label>E.</label> <?php echo $test[$i]["E"]?>
+                        </div>
+                        <br>
+                        <div class="input-group">
+                            <label>Jawaban: <?php echo $test[$i]["Jawaban"]?></label>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                </form>
+    <?php
+        }
+    ?>
                 <form method="POST">
                     <div class="btn-group">
                         <button class="btn btn-primary btn-lg" value="-1" name="whattodo"<?php if ($_SESSION['page']==0){echo "disabled";}else{echo "";}?> >BACK</button>
                         <?php for($i = 0;$i<(ceil($_SESSION["banyakSoal"]/5));$i++) {?>
                         <button class="btn btn-primary btn-lg" value="<?php echo $i;?>" name ="page"><?php echo $i+1;?></button>
                         <?php }?>
-                        
-                        
                         <button class="btn btn-primary btn-lg" value="1" name="whattodo"<?php if ($soalselesai){echo "disabled";}else{echo "";}?> >NEXT</button>
                     </div>
                 </form>
@@ -224,14 +191,11 @@
         <!-- Main Footer -->
         <footer class="main-footer">
             <!-- To the right -->
-            <div class="pull-right hidden-xs">
-                <b>Version</b> 1.0 - Initial Release
-            </div>
+            <div class="pull-right hidden-xs"><b>Version</b> 1.0 - Initial Release</div>
             <!-- Default to the left -->
             <strong>Copyright &copy; 2017 <a href="#">AVENGERS - APLIN SIB iSTTS</a>.</strong> All rights reserved.
         </footer>
     </div>
     <!-- ./wrapper -->
-
 </body>
 </html>

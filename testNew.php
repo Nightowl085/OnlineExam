@@ -1,4 +1,4 @@
-<?php include_once("module/1.database.php"); include_once("module/asset.php"); assetLoad();?>
+<?php include_once("module/1.database.php"); include_once("module/asset.php"); mainStyle(); mainScript(); ?>
 <script>
     $(function(){
         // Ambil dari DB, Tabel baru namanya header_jawaban
@@ -8,8 +8,8 @@
             date_default_timezone_set('GMT'); // agar mulai dari nol
             echo date("H:i:s",$mulai);
             if($mulai < 0 ) header("Location: 404");
-         ?>";
-        
+        ?>";
+
         String.prototype.padLeft = function (length, character) { 
             return new Array(length - this.length + 1).join(character || '0') + this;
         }
@@ -46,6 +46,4 @@
         }, 1000);
     });
 </script>
-<p id="jamUjian">
-	
-</p>
+<p id="jamUjian"></p>
